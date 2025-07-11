@@ -1,0 +1,19 @@
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <module name="org.apache.commons.io"/>
+            <module name="org.apache.commons.collections"/>
+            <module name="org.apache.commons.beanutils"/>
+        </dependencies>
+        <!-- This allows you to define additional dependencies, it is the same as using the Dependencies: manifest attribute -->
+<!--        <exclusions>-->
+<!--            <module name="org.slf4j"/>-->
+<!--            <module name="org.slf4j.impl"/>-->
+<!--        </exclusions>-->
+
+        <!-- Exclude built-in JBoss logging modules -->
+        <exclude-subsystems>
+            <subsystem name="logging"/>
+        </exclude-subsystems>
+    </deployment>
+</jboss-deployment-structure>
