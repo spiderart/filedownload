@@ -12,11 +12,12 @@ import java.util.Vector;
 public class SftpDownloader {
     private static Logger log = LoggerFactory.getLogger(SftpDownloader.class);
 
-    private static final String SFTP_HOST = "xx.x.x.xx";
+    private static final String SFTP_HOST = "10.9.9.84";
     private static final int SFTP_PORT = 22;
-    private static final String SFTP_USER = "xxxxxx";
+    private static final String SFTP_USER = "arsusr";
     private static final String SFTP_PASS = "xqwlqlvlnqmfzucSkiccXecVryfZ48zr5QcfxK";
     private static final String REMOTE_DIR = "/opt/clevel/datafile/REPORT/DOC/OUTBOX";
+    private static final String ARCHIVE_DIR = "/opt/clevel/datafile/REPORT/DOC/OUTBOX/ARCHIVE";
 
 
     public static List<String> downloadProjectFiles(String project, String localDir) throws Exception {
@@ -43,9 +44,17 @@ public class SftpDownloader {
                 if (entry.getAttrs().isDir() || ".".equals(fileName) || "..".equals(fileName)) {
                     continue; // Skip directories and special entries
                 }
+
+                // Only process files that match the project pattern
+//                if (!fileName.contains(project)) {
+//                    continue;
+//                }
+
+                String remoteFilePath = REMOTE_DIR + "/" + fileName;
                 String localFilePath = localDir + File.separator + fileName;
+
                 try (OutputStream output = new FileOutputStream(localFilePath)) {
-                    sftp.get(REMOTE_DIR + "/" + fileName, output);
+                    sftp.get(remoteFilePath, output);
                 } catch (FileNotFoundException e) {
                     log.error("File not found: {}", localFilePath, e);
                     throw e;
@@ -53,6 +62,17 @@ public class SftpDownloader {
                     log.error("I/O error while writing to file: {}", localFilePath, e);
                     throw e;
                 }
+
+                // After download, move file to archive directory on SFTP
+                String remoteArchivePath = ARCHIVE_DIR + "/" + fileName;
+                try {
+                    sftp.rename(remoteFilePath, remoteArchivePath);
+                    log.info("Moved file to archive: {}", remoteArchivePath);
+                } catch (SftpException e) {
+                    log.error("Failed to move file to archive: {}", remoteArchivePath, e);
+                    throw e;
+                }
+
                 downloadedFileNames.add(fileName);
             }
         } finally {
@@ -66,6 +86,7 @@ public class SftpDownloader {
 
         return downloadedFileNames;
     }
+
 
     public static void deleteRemoteFile(String remoteFileName) throws Exception {
         JSch jsch = new JSch();
