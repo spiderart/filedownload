@@ -12,9 +12,9 @@ import java.util.Vector;
 public class SftpDownloader {
     private static Logger log = LoggerFactory.getLogger(SftpDownloader.class);
 
-    private static final String SFTP_HOST = "10.9.9.84";
+    private static final String SFTP_HOST = "";
     private static final int SFTP_PORT = 22;
-    private static final String SFTP_USER = "arsusr";
+    private static final String SFTP_USER = "";
     private static final String SFTP_PASS = "xqwlqlvlnqmfzucSkiccXecVryfZ48zr5QcfxK";
     private static final String REMOTE_DIR = "/opt/clevel/datafile/REPORT/DOC/OUTBOX";
     private static final String ARCHIVE_DIR = "/opt/clevel/datafile/REPORT/DOC/OUTBOX/ARCHIVE";
